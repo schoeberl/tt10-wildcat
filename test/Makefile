@@ -5,7 +5,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = tt_um_chisel_template.v ChiselTop.v
+PROJECT_SOURCES = tt_um_schoeberl_wildcat.v ChiselTop.v
 
 ifneq ($(GATES),yes)
 
