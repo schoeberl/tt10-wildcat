@@ -1,0 +1,3 @@
+[submodule "wildcat"]
+	path = wildcat
+	url = git@github.com:schoeberl/wildcat.git
