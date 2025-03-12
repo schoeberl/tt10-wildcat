@@ -1,4 +1,5 @@
 import chisel3._
+import wildcat._
 
 /**
  * Example design in Chisel.
@@ -16,6 +17,10 @@ class ChiselTop() extends Module {
   io.uio_out := 0.U
   // use bi-directionals as input
   io.uio_oe := 0.U
+
+  val wild = Module(new pipeline.WildcatTop("wildcat/a.out"))
+
+  wild.io.rx := io.ui_in(0)
 
   val add = WireDefault(0.U(7.W))
   add := io.ui_in + io.uio_in

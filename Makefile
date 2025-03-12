@@ -1,3 +1,6 @@
+blink:
+	make -C wildcat app APP=asm/apps/blink.s
+	sbt "runMain ChiselTop"
 
 # Test the Chisel design
 run-test:
@@ -6,6 +9,7 @@ run-test:
 # generate the Verilog
 run-verilog:
 	sbt run
+
 
 openlane:
 	openlane openlane.json
