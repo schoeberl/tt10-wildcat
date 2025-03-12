@@ -39,7 +39,7 @@ module basys3_top (
     wire [7:0] uio_out; // TODO: shall go to PMOD, depending on the design
     wire [7:0] uio_oe;  // ignored
 
-    tt_um_lipsi_schoeberl user_project (
+    tt_um_schoeberl_wildcat user_project (
           .ui_in  (ui_in),    // Dedicated inputs
           .uo_out (uo_out),   // Dedicated outputs
           .uio_in (uio_in),   // IOs: Input path
