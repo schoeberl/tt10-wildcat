@@ -1,0 +1,6 @@
+{
+  "DESIGN_NAME": "tt_um_schoeberl_wildcat",
+  "VERILOG_FILES": ["dir::src/tt_um_schoeberl_wildcat.v", "dir::src/ChiselTop.v"],
+  "CLOCK_PERIOD": 20,
+  "CLOCK_PORT": "clock"
+}
