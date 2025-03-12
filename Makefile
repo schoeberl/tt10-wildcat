@@ -15,7 +15,7 @@ synth:
 	./wildcat/vivado_synth.sh -t basys3_top -p xc7a100tcsg324-1 -x nexysA7.xdc -o build src/basys3_top.v src/tt_um_schoeberl_wildcat.v src/ChiselTop.v
 
 cp-bit:
-	scp masca@chipdesign1.compute.dtu.dk:~/tt10-wildcat/basys3_top.bit 
+	scp masca@chipdesign1.compute.dtu.dk:~/tt10-wildcat/build/basys3_top.bit .
 
 # Configure the Basys3 or NexysA7 with open source tools
 
