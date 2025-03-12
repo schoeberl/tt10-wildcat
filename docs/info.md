@@ -9,12 +9,14 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-It is a RISC-V CPU
+It is an educational RISC-V core.
+This tapeout contains the bare minimum: an assembler coded *blinking* LED
+(In fact it counts up and displays the value on the 7-segment display).
 
 ## How to test
 
-TBD
+Just let it run and see the 7-segment display counting up.
 
 ## External hardware
 
-Flash and RAM PMOD (not really)
+None
