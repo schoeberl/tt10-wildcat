@@ -72,7 +72,7 @@ class ChiselTop() extends Module {
   val cntReg = RegInit(0.U(32.W))
   val ledReg = RegInit(0.U(1.W))
   cntReg := cntReg + 1.U
-  when (cntReg === 25000000.U) {
+  when (cntReg === 33000000.U) {
     cntReg := 0.U
     ledReg := ~ledReg
   }

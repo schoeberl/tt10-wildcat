@@ -1533,14 +1533,14 @@ module ChiselTop(
   always @(posedge clock) begin
     if (reset) begin // @[ChiselTop.scala 72:23]
       cntReg <= 32'h0; // @[ChiselTop.scala 72:23]
-    end else if (cntReg == 32'h17d7840) begin // @[ChiselTop.scala 75:32]
+    end else if (cntReg == 32'h1f78a40) begin // @[ChiselTop.scala 75:32]
       cntReg <= 32'h0; // @[ChiselTop.scala 76:12]
     end else begin
       cntReg <= _cntReg_T_1; // @[ChiselTop.scala 74:10]
     end
     if (reset) begin // @[ChiselTop.scala 73:23]
       ledReg <= 1'h0; // @[ChiselTop.scala 73:23]
-    end else if (cntReg == 32'h17d7840) begin // @[ChiselTop.scala 75:32]
+    end else if (cntReg == 32'h1f78a40) begin // @[ChiselTop.scala 75:32]
       ledReg <= ~ledReg; // @[ChiselTop.scala 77:12]
     end
   end
