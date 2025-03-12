@@ -22,6 +22,8 @@ class ChiselTop() extends Module {
 
   wild.io.rx := io.ui_in(0)
 
+  io.uo_out := wild.io.led
+  /*
   val add = WireDefault(0.U(7.W))
   add := io.ui_in + io.uio_in
 
@@ -34,6 +36,8 @@ class ChiselTop() extends Module {
     ledReg := ~ledReg
   }
   io.uo_out := ledReg ## add
+
+   */
 }
 
 object ChiselTop extends App {

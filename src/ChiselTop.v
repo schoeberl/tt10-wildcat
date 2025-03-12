@@ -1214,13 +1214,16 @@ end // initial
 `endif // SYNTHESIS
 endmodule
 module WildcatTop(
-  input   clock,
-  input   reset,
-  input   io_rx
+  input         clock,
+  input         reset,
+  output [15:0] io_led,
+  input         io_rx
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
   reg [31:0] _RAND_1;
+  reg [31:0] _RAND_2;
+  reg [31:0] _RAND_3;
 `endif // RANDOMIZE_REG_INIT
   wire  cpu_clock; // @[WildcatTop.scala 27:19]
   wire  cpu_reset; // @[WildcatTop.scala 27:19]
@@ -1264,8 +1267,10 @@ module WildcatTop(
   wire  _GEN_1 = memAddressReg[3:0] == 4'h4 & cpu_io_dmem_rdEnable; // @[WildcatTop.scala 56:23 63:46 65:27]
   wire [31:0] _GEN_2 = memAddressReg[3:0] == 4'h0 ? {{30'd0}, uartStatusReg} : _GEN_0; // @[WildcatTop.scala 61:40 62:26]
   wire  _GEN_3 = memAddressReg[3:0] == 4'h0 ? 1'h0 : _GEN_1; // @[WildcatTop.scala 56:23 61:40]
+  reg [7:0] ledReg; // @[WildcatTop.scala 69:23]
   wire  _T_16 = cpu_io_dmem_wrAddress[19:16] == 4'h0 & cpu_io_dmem_wrAddress[3:0] == 4'h4; // @[WildcatTop.scala 71:48]
   wire  _GEN_9 = cpu_io_dmem_wrAddress[31:28] == 4'hf & cpu_io_dmem_wrEnable_0 & _T_16; // @[WildcatTop.scala 55:23 70:79]
+  reg [7:0] io_led_REG; // @[WildcatTop.scala 80:39]
   ThreeCats cpu ( // @[WildcatTop.scala 27:19]
     .clock(cpu_clock),
     .reset(cpu_reset),
@@ -1312,6 +1317,7 @@ module WildcatTop(
     .io_channel_valid(rx_io_channel_valid),
     .io_channel_bits(rx_io_channel_bits)
   );
+  assign io_led = {8'h80,io_led_REG}; // @[WildcatTop.scala 80:29]
   assign cpu_clock = clock;
   assign cpu_reset = reset;
   assign cpu_io_imem_data = imem_io_data; // @[WildcatTop.scala 34:20]
@@ -1341,6 +1347,16 @@ module WildcatTop(
   always @(posedge clock) begin
     uartStatusReg <= {rx_io_channel_valid,tx_io_channel_ready}; // @[WildcatTop.scala 58:51]
     memAddressReg <= cpu_io_dmem_rdAddress; // @[WildcatTop.scala 59:30]
+    if (reset) begin // @[WildcatTop.scala 69:23]
+      ledReg <= 8'h0; // @[WildcatTop.scala 69:23]
+    end else if (cpu_io_dmem_wrAddress[31:28] == 4'hf & cpu_io_dmem_wrEnable_0) begin // @[WildcatTop.scala 70:79]
+      if (!(cpu_io_dmem_wrAddress[19:16] == 4'h0 & cpu_io_dmem_wrAddress[3:0] == 4'h4)) begin // @[WildcatTop.scala 71:88]
+        if (cpu_io_dmem_wrAddress[19:16] == 4'h1) begin // @[WildcatTop.scala 74:56]
+          ledReg <= cpu_io_dmem_wrData[7:0]; // @[WildcatTop.scala 75:14]
+        end
+      end
+    end
+    io_led_REG <= ledReg; // @[WildcatTop.scala 80:39]
     `ifndef SYNTHESIS
     `ifdef PRINTF_COND
       if (`PRINTF_COND) begin
@@ -1393,6 +1409,10 @@ initial begin
   uartStatusReg = _RAND_0[1:0];
   _RAND_1 = {1{`RANDOM}};
   memAddressReg = _RAND_1[31:0];
+  _RAND_2 = {1{`RANDOM}};
+  ledReg = _RAND_2[7:0];
+  _RAND_3 = {1{`RANDOM}};
+  io_led_REG = _RAND_3[7:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial
@@ -1410,88 +1430,20 @@ module ChiselTop(
   output [7:0] io_uio_out,
   output [7:0] io_uio_oe
 );
-`ifdef RANDOMIZE_REG_INIT
-  reg [31:0] _RAND_0;
-  reg [31:0] _RAND_1;
-`endif // RANDOMIZE_REG_INIT
   wire  wild_clock; // @[ChiselTop.scala 21:20]
   wire  wild_reset; // @[ChiselTop.scala 21:20]
+  wire [15:0] wild_io_led; // @[ChiselTop.scala 21:20]
   wire  wild_io_rx; // @[ChiselTop.scala 21:20]
-  wire [7:0] _add_T_1 = io_ui_in + io_uio_in; // @[ChiselTop.scala 26:19]
-  reg [31:0] cntReg; // @[ChiselTop.scala 29:23]
-  reg  ledReg; // @[ChiselTop.scala 30:23]
-  wire [31:0] _cntReg_T_1 = cntReg + 32'h1; // @[ChiselTop.scala 31:20]
-  wire [6:0] add = _add_T_1[6:0]; // @[ChiselTop.scala 25:24 26:7]
   WildcatTop wild ( // @[ChiselTop.scala 21:20]
     .clock(wild_clock),
     .reset(wild_reset),
+    .io_led(wild_io_led),
     .io_rx(wild_io_rx)
   );
-  assign io_uo_out = {ledReg,add}; // @[ChiselTop.scala 36:23]
+  assign io_uo_out = wild_io_led[7:0]; // @[ChiselTop.scala 25:13]
   assign io_uio_out = 8'h0; // @[ChiselTop.scala 17:14]
   assign io_uio_oe = 8'h0; // @[ChiselTop.scala 19:13]
   assign wild_clock = clock;
   assign wild_reset = reset;
   assign wild_io_rx = io_ui_in[0]; // @[ChiselTop.scala 23:25]
-  always @(posedge clock) begin
-    if (reset) begin // @[ChiselTop.scala 29:23]
-      cntReg <= 32'h0; // @[ChiselTop.scala 29:23]
-    end else if (cntReg == 32'h17d7840) begin // @[ChiselTop.scala 32:32]
-      cntReg <= 32'h0; // @[ChiselTop.scala 33:12]
-    end else begin
-      cntReg <= _cntReg_T_1; // @[ChiselTop.scala 31:10]
-    end
-    if (reset) begin // @[ChiselTop.scala 30:23]
-      ledReg <= 1'h0; // @[ChiselTop.scala 30:23]
-    end else if (cntReg == 32'h17d7840) begin // @[ChiselTop.scala 32:32]
-      ledReg <= ~ledReg; // @[ChiselTop.scala 34:12]
-    end
-  end
-// Register and memory initialization
-`ifdef RANDOMIZE_GARBAGE_ASSIGN
-`define RANDOMIZE
-`endif
-`ifdef RANDOMIZE_INVALID_ASSIGN
-`define RANDOMIZE
-`endif
-`ifdef RANDOMIZE_REG_INIT
-`define RANDOMIZE
-`endif
-`ifdef RANDOMIZE_MEM_INIT
-`define RANDOMIZE
-`endif
-`ifndef RANDOM
-`define RANDOM $random
-`endif
-`ifdef RANDOMIZE_MEM_INIT
-  integer initvar;
-`endif
-`ifndef SYNTHESIS
-`ifdef FIRRTL_BEFORE_INITIAL
-`FIRRTL_BEFORE_INITIAL
-`endif
-initial begin
-  `ifdef RANDOMIZE
-    `ifdef INIT_RANDOM
-      `INIT_RANDOM
-    `endif
-    `ifndef VERILATOR
-      `ifdef RANDOMIZE_DELAY
-        #`RANDOMIZE_DELAY begin end
-      `else
-        #0.002 begin end
-      `endif
-    `endif
-`ifdef RANDOMIZE_REG_INIT
-  _RAND_0 = {1{`RANDOM}};
-  cntReg = _RAND_0[31:0];
-  _RAND_1 = {1{`RANDOM}};
-  ledReg = _RAND_1[0:0];
-`endif // RANDOMIZE_REG_INIT
-  `endif // RANDOMIZE
-end // initial
-`ifdef FIRRTL_AFTER_INITIAL
-`FIRRTL_AFTER_INITIAL
-`endif
-`endif // SYNTHESIS
 endmodule
